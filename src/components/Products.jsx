@@ -5,7 +5,7 @@ import Cart from './Cart'
 
 export default function Products() {
   const [products, setProducts] = useState([])
-  const { cartItems, addToCart } = useContext(CartContext)
+  const { cartItems, addToCart, removeFromCart } = useContext(CartContext)
   const [showCart, setShowCart] = useState(false)
 
   function toggleCart() {
@@ -24,11 +24,11 @@ export default function Products() {
 
   return (
     <div className='flex flex-col justify-center bg-gray-100'>
-      <div className='flex justify-between items-center px-20 py-5'>
+      <div className='flex justify-between items-center px-20 py-5 sticky top-0 bg-gray-100 h-16'>
         <h1 className='text-2xl uppercase font-bold mt-10 text-center mb-10'>Shop</h1>
-        <h1 className='text-2xl uppercase font-bold mt-10 text-center mb-10'>Cart</h1>
+        {/* <h1 className='text-2xl uppercase font-bold mt-10 text-center mb-10'>Cart</h1> */}
         {!showCart && <button className='px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700' 
-          onClick={toggleCart}>Cart ({cartItems.length})</button>}
+          onClick={toggleCart}>Cart({cartItems.length})</button>}
       </div>
       <div className='grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-10'>
         {
@@ -41,7 +41,20 @@ export default function Products() {
                 <p className='mt-2 text-gray-600'>${product.price}</p>
               </div>
               <div className='mt-6 flex justify-between items-center'>
-                <button onClick={() => addToCart(product)} className='px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700'>Add to cart</button>
+                {!cartItems.some(item => item.id === product.id) ? (
+                  <button onClick={() => addToCart(product)} className='px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700'>
+                  Add to cart</button>) : (
+                    <div className='flex gap-4'>
+                    <button onClick={() => addToCart(product)} className='px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700'>
+                      +
+                    </button>
+                    <p>{cartItems.find(item => item.id === product.id).quantity}</p>
+                    <button onClick={() => removeFromCart(product)} className='px-4 py-2 bg-gray-800 text-white text-xs font-bold uppercase rounded hover:bg-gray-700 focus:outline-none focus:bg-gray-700'>
+                      -
+                    </button>
+                  </div>
+                  )
+                }              
               </div>
             </div>
           ))
